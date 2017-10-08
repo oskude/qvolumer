@@ -40,9 +40,9 @@ Set your X session to start `xbindkeys` and `qvolumer` on login. In case of JWM 
 ```
 <JWM>
 	...
-   <StartupCommand>xbindkeys</StartupCommand>
-   <StartupCommand>qvolumer</StartupCommand>
-   ...
+	<StartupCommand>xbindkeys</StartupCommand>
+	<StartupCommand>qvolumer</StartupCommand>
+	...
 </JWM>
 ```
 
