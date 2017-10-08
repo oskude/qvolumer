@@ -34,16 +34,20 @@ int main (int argc, char *argv[])
     QApplication a(argc, argv);
     QSingleInstance instance;
     QTimer *timer = new QTimer();
-
     QDialog *splash = new QDialog(Q_NULLPTR, Qt::SplashScreen);
-    QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
-    QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
     QSlider *slider = new QSlider(Qt::Horizontal);
-    slider->setParent(splash);
 
+    slider->setParent(splash);
     slider->setMinimum(0);
     slider->setMaximum(100);
     slider->setValue(getVolume());
+
+    QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
+    QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
+
+    // TODO: is this the correct way for initial resize and position?
+    splash->show();
+    splash->hide();
 
     //this lambda only gets executed on the first instance
     instance.setStartupFunction([&]() -> int {
