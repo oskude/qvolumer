@@ -2,8 +2,34 @@
 #include <QTimer>
 #include <QSlider>
 #include <QDialog>
+#include <QProcess>
+#include <QRegularExpression>
 
-int main(int argc, char *argv[])
+// TODO: yeah, in my system its the first percent value, and im lazy...
+QRegularExpression reVolume("([0-9]+)%");
+
+QString runCli (QString cmd)
+{
+    QProcess process;
+    process.start(cmd);
+    process.waitForFinished(-1);
+    return process.readAllStandardOutput();
+}
+
+int getVolume ()
+{
+    QString ret = runCli("pactl list sinks");
+    QRegularExpressionMatch mat = reVolume.match(ret);
+    return mat.captured(1).toInt();
+}
+
+void setVolume (int volume)
+{
+    QString cmd = QString("pactl set-sink-volume 0 %1\%").arg(volume);
+    runCli(cmd);
+}
+
+int main (int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QSingleInstance instance;
@@ -17,7 +43,7 @@ int main(int argc, char *argv[])
 
     slider->setMinimum(0);
     slider->setMaximum(100);
-    slider->setValue(50);
+    slider->setValue(getVolume());
 
     //this lambda only gets executed on the first instance
     instance.setStartupFunction([&]() -> int {
@@ -41,6 +67,7 @@ int main(int argc, char *argv[])
         }
 
         slider->setValue(newValue);
+        setVolume(newValue);
         timer->start(1000);
     });
 
