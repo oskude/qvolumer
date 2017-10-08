@@ -1,0 +1,31 @@
+pkgname=qvolumer
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="todo"
+arch=('i686' 'x86_64')
+url="http://github.com/oskude/qvolumer"
+license=('GPLv2')
+source=("git+file:///$(readlink -f ../..)/")
+md5sums=('SKIP')
+depends=(
+	'qt5-base'
+)
+makedepends=(
+	'qt5-base'
+	'qpm'
+)
+
+prepare () {
+	cd "$pkgname"
+	qpm install de.skycoder42.qsingleinstance
+}
+
+build() {
+	cd "$pkgname"
+	make
+}
+
+package() {
+	cd "$pkgname"
+	make PREFIX=/usr DESTDIR="$pkgdir" install
+}

@@ -1,2 +1,9 @@
+build
 vendor
 *.pro.user
+qvolumer
+
+distro/**
+!distro/archlinux
+!distro/archlinux/PKGBUILD
+*.pkg.tar.*
