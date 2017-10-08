@@ -7,6 +7,7 @@
 
 // TODO: yeah, in my system its the first percent value, and im lazy...
 QRegularExpression reVolume("([0-9]+)%");
+QRegularExpression reMute("Mute: (yes|no)");
 
 QString runCli (QString cmd)
 {
@@ -29,6 +30,27 @@ void setVolume (int volume)
     runCli(cmd);
 }
 
+bool getMute ()
+{
+    QString ret = runCli("pactl list sinks");
+    QRegularExpressionMatch mat = reMute.match(ret);
+    if (mat.captured(1) == "yes") {
+        return true;
+    }
+    return false;
+}
+
+void setMute (bool mute)
+{
+    QString cmd = QString("pactl set-sink-mute @DEFAULT_SINK@ %1");
+    if (mute) {
+        cmd = cmd.arg(1);
+    } else {
+        cmd = cmd.arg(0);
+    }
+    runCli(cmd);
+}
+
 int main (int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -41,6 +63,7 @@ int main (int argc, char *argv[])
     slider->setMinimum(0);
     slider->setMaximum(100);
     slider->setValue(getVolume());
+    slider->setDisabled(getMute());
 
     QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
     QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
@@ -56,22 +79,32 @@ int main (int argc, char *argv[])
 
     //new instances send their arguments and this signal is received on the main instance
     QObject::connect(&instance, &QSingleInstance::instanceMessage, [&](QStringList args){
-        if(args.size() > 1 && args[1] == "-quit") {
-            qApp->quit();
+        if(args.size() < 1) {
             return;
         }
 
-        int addValue = args[1].toInt();
-        int newValue = slider->value() + addValue;
-        newValue = newValue < 0 ? 0 : newValue;
-        newValue = newValue > 100 ? 100 : newValue;
+        if(args[1] == "-quit") {
+            qApp->quit();
+            return;
+        }
 
         if (!timer->isActive()) {
             splash->show();
         }
 
-        slider->setValue(newValue);
-        setVolume(newValue);
+        if (args[1] == "toggle") {
+            slider->setDisabled(slider->isEnabled());
+            setMute(!slider->isEnabled());
+        }
+        else {
+            int addValue = args[1].toInt();
+            int newValue = slider->value() + addValue;
+            newValue = newValue < 0 ? 0 : newValue;
+            newValue = newValue > 100 ? 100 : newValue;
+            slider->setValue(newValue);
+            setVolume(newValue);
+        }
+
         timer->start(1000);
     });
 
