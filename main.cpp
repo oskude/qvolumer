@@ -35,7 +35,7 @@ int main (int argc, char *argv[])
     QSingleInstance instance;
     QTimer *timer = new QTimer();
 
-    QDialog *splash = new QDialog;
+    QDialog *splash = new QDialog(Q_NULLPTR, Qt::SplashScreen);
     QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
     QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
     QSlider *slider = new QSlider(Qt::Horizontal);
