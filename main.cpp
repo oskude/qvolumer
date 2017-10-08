@@ -25,7 +25,7 @@ int getVolume ()
 
 void setVolume (int volume)
 {
-    QString cmd = QString("pactl set-sink-volume 0 %1\%").arg(volume);
+    QString cmd = QString("pactl set-sink-volume @DEFAULT_SINK@ %1\%").arg(volume);
     runCli(cmd);
 }
 
