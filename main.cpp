@@ -17,23 +17,30 @@ int main(int argc, char *argv[])
 
     slider->setMinimum(0);
     slider->setMaximum(100);
+    slider->setValue(50);
 
     //this lambda only gets executed on the first instance
     instance.setStartupFunction([&]() -> int {
-        qDebug() << "Instance running! Start another with -quit as first argument to exit";
         return 0;
     });
 
     //new instances send their arguments and this signal is received on the main instance
     QObject::connect(&instance, &QSingleInstance::instanceMessage, [&](QStringList args){
-        qDebug() << "New Instance:" << args;
         if(args.size() > 1 && args[1] == "-quit") {
             qApp->quit();
+            return;
         }
+
+        int addValue = args[1].toInt();
+        int newValue = slider->value() + addValue;
+        newValue = newValue < 0 ? 0 : newValue;
+        newValue = newValue > 100 ? 100 : newValue;
+
         if (!timer->isActive()) {
             splash->show();
         }
-        slider->setValue(50);
+
+        slider->setValue(newValue);
         timer->start(1000);
     });
 
