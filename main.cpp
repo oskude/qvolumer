@@ -1,17 +1,22 @@
 #include <qsingleinstance.h>
-#include <QSplashScreen>
 #include <QTimer>
+#include <QSlider>
+#include <QDialog>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QSingleInstance instance;
-
     QTimer *timer = new QTimer();
-    QSplashScreen *splash = new QSplashScreen;
-    splash->setPixmap(QPixmap("/data/projects/qt/qvolumer/splash.png"));
-    QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(close()));
+
+    QDialog *splash = new QDialog;
+    QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
     QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
+    QSlider *slider = new QSlider(Qt::Horizontal);
+    slider->setParent(splash);
+
+    slider->setMinimum(0);
+    slider->setMaximum(100);
 
     //this lambda only gets executed on the first instance
     instance.setStartupFunction([&]() -> int {
@@ -28,6 +33,7 @@ int main(int argc, char *argv[])
         if (!timer->isActive()) {
             splash->show();
         }
+        slider->setValue(50);
         timer->start(1000);
     });
 
