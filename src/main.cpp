@@ -1,9 +1,8 @@
 #include <qsingleinstance.h>
 #include <QTimer>
-#include <QSlider>
-#include <QDialog>
 #include <QProcess>
 #include <QRegularExpression>
+#include <volume-splash.h>
 
 // TODO: yeah, in my system its the first percent value, and im lazy...
 QRegularExpression reVolume("([0-9]+)%");
@@ -56,21 +55,13 @@ int main (int argc, char *argv[])
 	QApplication a(argc, argv);
 	QSingleInstance instance;
 	QTimer *timer = new QTimer();
-	QDialog *splash = new QDialog(Q_NULLPTR, Qt::SplashScreen);
-	QSlider *slider = new QSlider(Qt::Horizontal);
+	VolumeSplash *vsplash = new VolumeSplash();
 
-	slider->setParent(splash);
-	slider->setMinimum(0);
-	slider->setMaximum(100);
-	slider->setValue(getVolume());
-	slider->setDisabled(getMute());
-
-	QObject::connect(timer, SIGNAL(timeout()), splash, SLOT(hide()));
+	QObject::connect(timer, SIGNAL(timeout()), vsplash, SLOT(hide()));
 	QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
 
-	// TODO: is this the correct way for initial resize and position?
-	splash->show();
-	splash->hide();
+	vsplash->setVolume(getVolume());
+	vsplash->setMute(getMute());
 
 	//this lambda only gets executed on the first instance
 	instance.setStartupFunction([&]() -> int {
@@ -89,20 +80,15 @@ int main (int argc, char *argv[])
 		}
 
 		if (!timer->isActive()) {
-			splash->show();
+			vsplash->show();
 		}
 
 		if (args[1] == "toggle") {
-			slider->setDisabled(slider->isEnabled());
-			setMute(!slider->isEnabled());
+			setMute(vsplash->toggle());
 		}
 		else {
-			int addValue = args[1].toInt();
-			int newValue = slider->value() + addValue;
-			newValue = newValue < 0 ? 0 : newValue;
-			newValue = newValue > 100 ? 100 : newValue;
-			slider->setValue(newValue);
-			setVolume(newValue);
+			int v = args[1].toInt();
+			setVolume(vsplash->addVolume(v));
 		}
 
 		timer->start(1000);
