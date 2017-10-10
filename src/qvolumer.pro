@@ -26,4 +26,4 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
 	main.cpp
 
-include(vendor/vendor.pri)
+include(../vendor/vendor.pri)

@@ -7,7 +7,7 @@ all: build
 build:
 	mkdir -p build
 	cd build; \
-		qmake ../qvolumer.pro; \
+		qmake ../src/qvolumer.pro; \
 		make
 	mv build/qvolumer .
 
