@@ -9,9 +9,9 @@ source=("git+file:///$(readlink -f ../..)/")
 md5sums=('SKIP')
 depends=(
 	'qt5-base'
+	'qt5-declarative'
 )
 makedepends=(
-	'qt5-base'
 	'qpm'
 )
 

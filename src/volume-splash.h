@@ -2,7 +2,8 @@
 #define VOLUME_SPLASH_H
 
 #include <QDialog>
-#include <QSlider>
+#include <QQuickWidget>
+#include <QQuickItem>
 
 class VolumeSplash : public QDialog
 {
@@ -15,7 +16,9 @@ public:
 	int addVolume(signed int vol);
 
 private:
-	QSlider *slider;
+	QQuickWidget *w;
+	QQuickItem *ui;
+	int volume;
 
 signals:
 

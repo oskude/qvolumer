@@ -1,17 +1,17 @@
 # qvolumer
 
-`qvolumer` is a *daemon-cli-x-splash-thing* for setting PulseAudio default sink volume, intended for use with keyboard media keys.
+`qvolumer` is a *daemon-cli-x-splash-thing* for setting and displaying PulseAudio default sink volume, intended for use with keyboard media keys.
 
 ![screenshot](screenshot.gif?raw=true "screenshot of qvolumer rising, lowering and muting audio volume")
 
 ## Requirements
 
-- Build
-  - [qt5-base](https://www.qt.io/)
-  - [qpm](https://www.qpm.io/)
 - Usage
   - [qt5-base](https://www.qt.io/)
+  - [qt5-declarative](https://www.qt.io/)
   - [pactl](https://www.freedesktop.org/wiki/Software/PulseAudio/)
+- Build
+  - [qpm](https://www.qpm.io/)
 
 ## Build
 
